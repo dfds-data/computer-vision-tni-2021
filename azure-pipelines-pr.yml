@@ -1,0 +1,50 @@
+# python version variable
+trigger: none
+
+jobs:
+  - job: precommit
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.8'
+      displayName: '3.8'
+    - script: |
+        python -m pip install --upgrade pip
+        pip install -r requirements-dev.txt
+      displayName: 'Install dependencies'
+    - script: |
+        pre-commit run --all-files
+      displayName: 'Pre-commit check on all files'
+
+  - job: pytest
+    strategy:
+      matrix:
+        LinuxTestPython38:
+          python.version: '3.8'
+          vmImage: 'ubuntu-latest'
+        LinuxTestPython39:
+          python.version: '3.9'
+          vmImage: 'ubuntu-latest'
+        WinTestPython38:
+          python.version: '3.8'
+          vmImage: 'vs2017-win2016'
+        WinTestPython39:
+          python.version: '3.9'
+          vmImage: 'vs2017-win2016'
+    pool:
+      vmImage: $(vmImage)
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '$(python.version)'
+      displayName: '$(python.version)'
+    - script: |
+        python -m pip install --upgrade pip
+        pip install -r requirements-dev.txt
+        pip install -r requirements.txt
+      displayName: 'Instal dependencies.'
+    - script: |
+        python -m pytest ds_toolbox
+      displayName: 'Run pytest'
