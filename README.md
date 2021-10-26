@@ -4,32 +4,36 @@ Showcase computer vision capabilities
 
 ## Quickstart
 
-TODO: Update this section!
+Create a virtualenv, activate it.
 
-Use VSCode devcontainer.
+Then install dependencies:
+```shell
+pip install -r requirements.txt
+pip install -r requirements-dev.txt
+```
 
-```md
+Install pre-commit
+```shell
+pre-commit install
+```
+
+Test installation
+```shell
+pre-commit run --all-files
 pytest
 ```
 
-## CI/CD
+Run the webapp
+```shell
+streamlit run src/webapp.py
+```
 
-TODO: Update this section!
-
-How your code is tested, packaged and deployed automatically, and which
-environment it's running in
+Now open your browser at http://localhost:8501/
 
 ## Known issues
 
-TODO: Update this section!
-
-Known issues in the solution if any
 
 ## People
 
-TODO: Update this section!
-
-List a few people in DFDS and their roles, optionally include email
-
-- [Donald Duck](mailto:donald@duckburg.org) (Unlucky Duck)
-- [Barack Obama](obama@us.gov) (Former President)
+- [Kasper Lauritzen](mailto:klaur@dfds.com) 
+- [Dennis Hansen](mailto:dhans@dfds.com) 
