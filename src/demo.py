@@ -1,9 +1,17 @@
+import logging
+
 import cv2
 import dlib
 import numpy as np
 from PIL import Image
 
 from src.factory import setup_model
+
+# for face detection
+detector = dlib.get_frontal_face_detector()
+
+# load model and weights
+model, img_size = setup_model()
 
 
 def draw_label(image, point, label, font=cv2.FONT_HERSHEY_SIMPLEX, font_scale=0.8, thickness=1):
@@ -33,12 +41,6 @@ def resize_image(img: np.array) -> np.array:
 def detect_age_gender(img: Image.Image) -> Image.Image:
     margin = 0.4
 
-    # for face detection
-    detector = dlib.get_frontal_face_detector()
-
-    # load model and weights
-    model, img_size = setup_model()
-
     img = convert_pil_2_cv2(img)
     img = resize_image(img)
     # dlib needs image in rgb format
@@ -48,7 +50,7 @@ def detect_age_gender(img: Image.Image) -> Image.Image:
     # detect faces using dlib detector
     detected = detector(img_rgb, 1)
     faces = np.empty((len(detected), img_size, img_size, 3))
-    print(f"# faces: {len(detected)}")
+    logging.info(f"# faces: {len(detected)}")
     if len(detected) > 0:
         for i, d in enumerate(detected):
             x1, y1, x2, y2, w, h = (
@@ -72,12 +74,11 @@ def detect_age_gender(img: Image.Image) -> Image.Image:
         predicted_genders = results[0]
         ages = np.arange(0, 101).reshape(101, 1)
         predicted_ages = results[1].dot(ages).flatten()
-        print(predicted_ages)
         # draw results
         for i, d in enumerate(detected):
             label = "{}, {}".format(
                 int(predicted_ages[i]), "M" if predicted_genders[i][0] < 0.5 else "F"
             )
             draw_label(img, (d.left(), d.top()), label)
-            print(label)
+            logging.info("label {i}: {label}")
     return convert_cv2_2_pil(img)
