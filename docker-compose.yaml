@@ -1,0 +1,7 @@
+version: "3"
+services:
+  webapp:
+    build:
+      dockerfile: Dockerfile
+    ports:
+      - "5050:8501"
