@@ -1,5 +1,15 @@
 streamlit==1.1.0
 opencv-python==4.5.4.58
 streamlit-webcam-example==0.1.0
-# local package
--e .
+cmake
+dlib
+tensorflow
+scipy
+numpy
+Pandas
+tqdm
+h5py
+hydra-core
+scikit-learn
+albumentations
+omegaconf
