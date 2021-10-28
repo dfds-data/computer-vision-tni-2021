@@ -1,6 +1,7 @@
 import cv2
 import dlib
 import numpy as np
+from PIL import Image
 
 from src.factory import setup_model
 
@@ -14,14 +15,22 @@ def draw_label(image, point, label, font=cv2.FONT_HERSHEY_SIMPLEX, font_scale=0.
     )
 
 
-def resize_image(img):
-    opencvImage = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
-    h, w, _ = opencvImage.shape
+def convert_pil_2_cv2(img: Image.Image) -> np.array:
+    return cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
+
+
+def convert_cv2_2_pil(img: np.array) -> Image.Image:
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    return Image.fromarray(img)
+
+
+def resize_image(img: np.array) -> np.array:
+    h, w, _ = img.shape
     r = 640 / max(w, h)
-    return cv2.resize(opencvImage, (int(w * r), int(h * r)))
+    return cv2.resize(img, (int(w * r), int(h * r)))
 
 
-def detect_age_gender(img):
+def detect_age_gender(img: Image.Image) -> Image.Image:
     margin = 0.4
 
     # for face detection
@@ -30,12 +39,14 @@ def detect_age_gender(img):
     # load model and weights
     model, img_size = setup_model()
 
+    img = convert_pil_2_cv2(img)
     img = resize_image(img)
-    input_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    img_h, img_w, _ = np.shape(input_img)
+    # dlib needs image in rgb format
+    img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    img_h, img_w, _ = np.shape(img_rgb)
 
     # detect faces using dlib detector
-    detected = detector(input_img, 1)
+    detected = detector(img_rgb, 1)
     faces = np.empty((len(detected), img_size, img_size, 3))
     print(f"# faces: {len(detected)}")
     if len(detected) > 0:
@@ -69,4 +80,4 @@ def detect_age_gender(img):
             )
             draw_label(img, (d.left(), d.top()), label)
             print(label)
-    return img
+    return convert_cv2_2_pil(img)
