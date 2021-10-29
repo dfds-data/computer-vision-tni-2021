@@ -15,9 +15,16 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY src/factory.py src/factory.py
-RUN python src/factory.py
+COPY src/demo.py src/demo.py
+COPY src/warmstart.py src/warmstart.py
+COPY src/__init__.py src/__init__.py
+COPY setup.py .
+RUN pip install -e .
+
+COPY imgs/itamar.jpg imgs/itamar.jpg
+
+RUN python src/warmstart.py
 
 COPY . .
-RUN pip install .
 
 CMD ["streamlit", "run", "src/webapp.py"]

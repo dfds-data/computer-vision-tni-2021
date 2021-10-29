@@ -80,5 +80,5 @@ def detect_age_gender(img: Image.Image) -> Image.Image:
                 int(predicted_ages[i]), "M" if predicted_genders[i][0] < 0.5 else "F"
             )
             draw_label(img, (d.left(), d.top()), label)
-            logging.info("label {i}: {label}")
+            logging.info(f"label {i}: {label}")
     return convert_cv2_2_pil(img)
